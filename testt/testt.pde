@@ -148,8 +148,6 @@ void draw() {
   textAlign (CENTER, CENTER);
   textFont(mainFont, 20);
   text( nmtext, nmX, nmY, nmW, nmH);
-  fill(sidemenucolor);
-  rect ( 0, 0, thingWidth, height);
   fill(white);
   musicdraw();
 
@@ -242,17 +240,12 @@ void draw() {
     rect ( leftX, botY, colWidth, colHeight);
     fill(yellow); 
     rect ( midX, topY, colWidth, colHeight);
-
-    if (nightmodeOFF==true) {
       fill(green); 
       rect ( midX, cenY, colWidth, colHeight);
       fill(dgreen); 
       rect ( midX, botY, colWidth, colHeight);
       fill(brown); 
       rect ( rightX, topY, colWidth, colHeight);
-    }
-
-
     fill(black); 
     rect ( rightX, cenY, colWidth, colHeight);
     fill(pink); 
@@ -541,7 +534,7 @@ public void mousePressed() {
     drawColor= pink;
   }
   if (mouseX>ranX && mouseX<ranX+colWidth && mouseY>topY && mouseY<topY+ranHeight) {
-    drawColor=color( random(255), random(255), random(255));
+    drawColor=color( random(255), random(255), random(0));
   }
 
 
