@@ -140,7 +140,6 @@ public void setup() {
   owl = loadImage("owl.jpg");
   eraser = loadImage("erase.png");
   restart = loadImage("restart.png");
-  
 }
 //End setup
 //
@@ -400,10 +399,11 @@ public void mousePressed() {
   if (nightmodeOFF==true && mouseX>nmX && mouseX<nmX+nmW && mouseY>nmY && mouseY<nmY+nmH) {
     nightmodeOFF=false;//nightmode on
     sidemenucolor = white;
-  } else {
+  } else if (nightmodeOFF==false && mouseX>nmX && mouseX<nmX+nmW && mouseY>nmY && mouseY<nmY+nmH) {
     nightmodeOFF=true;
     sidemenucolor = Lblue;
   }
+
   fill(sidemenucolor);
   rect ( 0, 0, thingWidth, height);
 
