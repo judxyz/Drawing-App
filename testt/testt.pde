@@ -240,12 +240,12 @@ void draw() {
     rect ( leftX, botY, colWidth, colHeight);
     fill(yellow); 
     rect ( midX, topY, colWidth, colHeight);
-      fill(green); 
-      rect ( midX, cenY, colWidth, colHeight);
-      fill(dgreen); 
-      rect ( midX, botY, colWidth, colHeight);
-      fill(brown); 
-      rect ( rightX, topY, colWidth, colHeight);
+    fill(green); 
+    rect ( midX, cenY, colWidth, colHeight);
+    fill(dgreen); 
+    rect ( midX, botY, colWidth, colHeight);
+    fill(brown); 
+    rect ( rightX, topY, colWidth, colHeight);
     fill(black); 
     rect ( rightX, cenY, colWidth, colHeight);
     fill(pink); 
