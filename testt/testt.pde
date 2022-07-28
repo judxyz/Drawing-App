@@ -17,14 +17,15 @@ float sidebutFill, penX, penY, penWidth, penHeight, eraseX, eraseY, eraseW, eras
 float strokeW, thinX, thinY, thinWidth, thinHeight, medX, thickX;
 float sqY, sqWidth, sqHeight, sqcirX, cirX, cirY, cirWidth, cirHeight, sqX, trX, trTopX, trLeftY, trRightX, trRightY, trTopY, trLeftX;
 float pickerWidth, pickerHeight, leftX, topY, colWidth, colHeight, midX, rightX, cenY, botY, ranX, ranHeight;
-int drawColor, fillPen, fillStamp, fillColor, fillImages, buttonFill, textFill, grey=0xffCCCCCC, white=0xffFFFFFF, red=0xffE00909, orange=0xffFFB700, yellow=0xffFEFF00, green=0xff14FF00, blue=0xff00A8FF, purple=0xff9800FF, pink=0xffFC94D3, black=0xff000000, Lblue=0xffAFE6FF;
+int drawColor, fillPen, fillStamp, fillColor, fillImages, buttonFill, textFill, grey=0xffCCCCCC, white=0xffFFFFFF, red=0xffE00909, orange=0xffFFB700, yellow=0xffFEFF00, green=0xff14FF00, dgreen=#AFE600, brown=#761C1C, pink=0xffFC94D3, black=0xff000000, Lblue = #B4E7FF;
 Boolean draw=false, stamp=false, colorr=false, image=false, drawmenu=true, stampmenu=true, imagemenu=true, colorrmenu=true, drawRESET=true, stampRESET=true, colorrRESET=true, imageRESET=true;
 Boolean stampRec=false, stampCir=false, stampTri=false;
-Boolean erase=false, reset=false;
-float butterflyX, igY, igW, igH, minionX, owlX, drawIgX, drawIgY, drawIgW, drawIgH;
+Boolean erase=false, reset=false, nightmodeOFF=false;
+float butterflyX, igY, igW, igH, minionX, owlX, drawIgX, drawIgY, drawIgW, drawIgH, nmX, nmY, nmW, nmH;
 PFont mainFont, font;
 PImage butterfly, minion, owl, restart, eraser;
-String thin="Thin", med="Medium", thick="Thick";
+String thin="Thin", med="Medium", thick="Thick", nmtext="NightMode";
+color sidemenucolor;
 //
 public void setup() {
   musicsetup();
@@ -32,6 +33,7 @@ public void setup() {
   //Display Orientation Checker
   //Display and CANVAS Checker
   size(1300, 900); //Landscape
+  background(pink);
   //
   //Population
   drawingSurfaceX = width*1/3;
@@ -65,22 +67,22 @@ public void setup() {
   //pen menu
   thinX = thingWidth+thingWidth*1/10;
   thinY = penY+penY*1/5;
-  thinWidth = penWidth/1.5f;
-  thinHeight = penWidth/1.5f;
-  medX = thingWidth+thingWidth*1/1.5f;
-  thickX = thingWidth*2.2f;
+  thinWidth = penWidth/1.5;
+  thinHeight = penWidth/1.5;
+  medX = thingWidth+thingWidth*1/1.5;
+  thickX = thingWidth*2.2;
 
 
 
   //stamp menu
   sqX = thingWidth+thingWidth*1/10;
   sqY = stampY+stampY*1/20;
-  sqWidth = penWidth/1.5f;
-  sqHeight = penWidth/1.5f;
+  sqWidth = penWidth/1.5;
+  sqHeight = penWidth/1.5;
   sqcirX = thingWidth+pickerWidth*2/5;
   cirX = thingWidth+pickerWidth*1/2;
   cirY = stampY+pickerHeight/4;
-  trX = thingWidth*2.2f;
+  trX = thingWidth*2.2;
   trTopX = trX+sqWidth*1/2;
   trTopY = sqY;
   trLeftX = trX;
@@ -94,27 +96,31 @@ public void setup() {
   topY = colorY+pickerWidth*1/10;
   colWidth = pickerWidth*1/5;
   colHeight = pickerHeight*1/5;
-  midX = thingWidth+pickerWidth*1/3.5f;
+  midX = thingWidth+pickerWidth*1/3.5;
   rightX = thingWidth+pickerWidth*1/2;
-  cenY = colorY+pickerHeight*1/2.5f;
+  cenY = colorY+pickerHeight*1/2.5;
   botY = colorY+pickerHeight*2/3;
-  ranX = thingWidth+pickerWidth/1.35f;
-  ranHeight = colHeight*3.6f;
+  ranX = thingWidth+pickerWidth/1.35;
+  ranHeight = colHeight*3.6;
 
   rect(thingWidth, imageY, pickerWidth, pickerHeight);
 
   //image menu
   butterflyX = thingWidth+thingWidth*1/20;
   igY = imageY+imageY*1/50;
-  igW = penWidth/1.2f;
-  igH = penWidth/1.2f;
+  igW = penWidth/1.2;
+  igH = penWidth/1.2;
   minionX = thingWidth+pickerWidth*1/3;
-  owlX = thingWidth*2.2f;
-  drawIgX = width*1.3f/3;
+  owlX = thingWidth*2.2;
+  drawIgX = width*1.3/3;
   drawIgY = height*1/7;
   drawIgW = width/2;
   drawIgH = height/2;
   //
+  nmX = quitX-100;
+  nmY = eraseY;
+  nmW = eraseW*1.5;
+  nmH = eraseH;
   //
   fill(white);
   rect( drawingSurfaceX, drawingSurfaceY, drawingSurfaceWidth, drawingSurfaceHeight );
@@ -122,6 +128,9 @@ public void setup() {
   //
   rect( eraseX, eraseY, eraseW, eraseH );
   rect( resetX, eraseY, eraseW, eraseH );
+  rect( nmX, nmY, nmW, nmH);
+
+
   //
   font = createFont("Arial", 5);
   mainFont = createFont ("Gabriola", 48);
@@ -131,10 +140,20 @@ public void setup() {
   owl = loadImage("owl.jpg");
   eraser = loadImage("erase.png");
   restart = loadImage("restart.png");
-}//End setup
+  
+}
+//End setup
 //
 void draw() {
+  fill(black);
+  textAlign (CENTER, CENTER);
+  textFont(mainFont, 20);
+  text( nmtext, nmX, nmY, nmW, nmH);
+  fill(sidemenucolor);
+  rect ( 0, 0, thingWidth, height);
+  fill(white);
   musicdraw();
+
   if (draw == true) {
     stroke(drawColor);
     strokeWeight(strokeW);
@@ -145,6 +164,7 @@ void draw() {
   }
   if (drawmenu == true) {
     strokeWeight(1);
+    stroke(black);
     rect( thingWidth, penY, pickerWidth, pickerHeight/2);
     rect ( thinX, thinY, thinWidth, thinHeight);
     rect( medX, thinY, thinWidth, thinHeight);
@@ -161,7 +181,7 @@ void draw() {
 
   if (drawRESET == true) {
     noStroke();
-    fill(grey);
+    fill(pink);
     rect(thingWidth+1, penY, pickerWidth, pickerHeight/2+1);
     fill(white);
     strokeWeight(1);
@@ -200,11 +220,12 @@ void draw() {
     rect ( sqX, sqY, sqWidth, sqHeight);
     ellipse( cirX, cirY, sqWidth, sqHeight);
     triangle(trTopX, trTopY, trLeftX, trLeftY, trRightX, trRightY);
+    strokeWeight(1);
   }
 
   if (stampRESET == true) {
     noStroke();
-    fill(grey);
+    fill(pink);
     rect(thingWidth+1, stampY-1, pickerWidth, pickerHeight);
     fill(white);
     strokeWeight(1);
@@ -222,12 +243,17 @@ void draw() {
     rect ( leftX, botY, colWidth, colHeight);
     fill(yellow); 
     rect ( midX, topY, colWidth, colHeight);
-    fill(green); 
-    rect ( midX, cenY, colWidth, colHeight);
-    fill(blue); 
-    rect ( midX, botY, colWidth, colHeight);
-    fill(purple); 
-    rect ( rightX, topY, colWidth, colHeight);
+
+    if (nightmodeOFF==true) {
+      fill(green); 
+      rect ( midX, cenY, colWidth, colHeight);
+      fill(dgreen); 
+      rect ( midX, botY, colWidth, colHeight);
+      fill(brown); 
+      rect ( rightX, topY, colWidth, colHeight);
+    }
+
+
     fill(black); 
     rect ( rightX, cenY, colWidth, colHeight);
     fill(pink); 
@@ -243,7 +269,7 @@ void draw() {
 
   if (colorrRESET == true) {
     noStroke();
-    fill(grey);
+    fill(pink);
     rect(thingWidth+1, colorY, pickerWidth, pickerHeight+1);
     fill(white);
     strokeWeight(1);
@@ -266,7 +292,7 @@ void draw() {
 
   if (imageRESET == true) {
     noStroke();
-    fill(grey);
+    fill(pink);
     rect(thingWidth+1, imageY, pickerWidth, pickerHeight);
     fill(white);
     strokeWeight(1);
@@ -290,13 +316,13 @@ void draw() {
   //texts
 
   if (mouseX<drawingSurfaceX && mouseX>drawingSurfaceX+drawingSurfaceWidth && mouseY<drawingSurfaceY && mouseY>drawingSurfaceY+drawingSurfaceHeight)
-    stroke(grey);
-  fill(grey);
+    stroke(pink);
+  fill(pink);
 
   //Hoverover
   if (mouseX>penX && mouseX<penX+penWidth && mouseY>penY && mouseY<penY+penHeight)
   {
-    fillPen = Lblue;
+    fillPen = pink;
   } else {
     fillPen = grey;
   }
@@ -308,7 +334,7 @@ void draw() {
 
   if (mouseX>penX && mouseX<penX+penWidth && mouseY>stampY && mouseY<stampY+penHeight)
   {
-    fillStamp = Lblue;
+    fillStamp = pink;
   } else {
     fillStamp = grey;
   }
@@ -317,7 +343,7 @@ void draw() {
 
   if (mouseX>penX && mouseX<penX+penWidth && mouseY>colorY && mouseY<colorY+penHeight)
   {
-    fillColor = Lblue;
+    fillColor = pink;
   } else {
     fillColor = grey;
   }
@@ -326,7 +352,7 @@ void draw() {
 
   if (mouseX>penX && mouseX<penX+penWidth && mouseY>imageY && mouseY<imageY+penHeight)
   {
-    fillImages = Lblue;
+    fillImages = pink;
   } else {
     fillImages = grey;
   }
@@ -349,7 +375,7 @@ void draw() {
     buttonFill = red;
     textFill = white;
   } else {
-    buttonFill = grey;
+    buttonFill = pink;
     textFill = black;
   }
   fill(buttonFill); 
@@ -363,176 +389,200 @@ void draw() {
   text( "X", quitX, quitY, quitWidth, quitHeight);
   fill(white);
 }
+
 //End draw
 //
 public void keyPressed() {
 }//End keyPressed
 //
-public void mousePressed()
-{
-  if (mousePressed) { 
-    soundeff.play();
-    if ( soundeff.position() == soundeff.length() ) {
+public void mousePressed() {
+
+  if (nightmodeOFF==true && mouseX>nmX && mouseX<nmX+nmW && mouseY>nmY && mouseY<nmY+nmH) {
+    nightmodeOFF=false;//nightmode on
+    sidemenucolor = white;
+  } else {
+    nightmodeOFF=true;
+    sidemenucolor = Lblue;
+  }
+  fill(sidemenucolor);
+  rect ( 0, 0, thingWidth, height);
+
+
+
+
+
+
+  soundeff.play();
+  if ( soundeff.position() >= soundeff.length()-soundeff.length()*4/5 ) {
     soundeff.rewind();
     soundeff.play();
-    }
   }
-    
-    musicplay();
 
-    if ( mouseX>penX && mouseX<penX+penWidth && mouseY>penY && mouseY<penY+penHeight ) 
-      if ( draw == true ) {
-        draw = false;
-        drawRESET = true;
-      } else {
-        draw  = true;
-        drawRESET = false;
-        stamp=erase=false;
-      }
 
-    if ( mouseX>penX && mouseX<penX+penWidth && mouseY>stampY && mouseY<stampY+penHeight ) 
-      if ( stamp == true ) {
-        stamp = false;
-        stampRESET = true;
-      } else {
-        stamp = true;
-        stampRESET = false;
-        draw=erase=false;
-      }
+  musicplay();
 
-    if ( mouseX>penX && mouseX<penX+penWidth && mouseY>colorY && mouseY<colorY+penHeight ) 
-      if ( colorr == true ) {
-        colorr = false;
-        colorrRESET = true;
-      } else {
-        colorr = true;
-        colorrRESET = false;
-      }
-    if ( mouseX>penX && mouseX<penX+penWidth && mouseY>imageY && mouseY<imageY+penHeight ) 
-      if ( image == true ) {
-        image = false;
-        imageRESET = true;
-        imagemenu=false;
-      } else {
-        image = true;
-        imageRESET = false;
-        imagemenu=true;
-      }
-
-    if (draw==true && mouseX>thinX && mouseX<thinX+thinWidth && mouseY>thinY && mouseY<thinY+thinHeight) {
-      strokeW=1;
-      stamp=false;
-    }
-    if (draw==true && mouseX>medX && mouseX<medX+thinWidth && mouseY>thinY && mouseY<thinY+thinHeight) {
-      strokeW=3;
-      stamp=false;
-    }
-    if (draw==true && mouseX>thickX && mouseX<thickX+thinWidth && mouseY>thinY && mouseY<thinY+thinHeight) {
-      strokeW=5;
-      stamp=false;
+  if ( mouseX>penX && mouseX<penX+penWidth && mouseY>penY && mouseY<penY+penHeight ) 
+    if ( draw == true ) {
+      draw = false;
+      drawRESET = true;
+      soundeff.play();
+    } else {
+      draw  = true;
+      drawRESET = false;
+      stamp=erase=false;
+      soundeff.play();
     }
 
-
-    if (stamp==true && mouseX>sqX && mouseX<sqX+sqWidth && mouseY>sqY && mouseY<sqY+sqHeight) {
-      stampRec=true;
-      draw=false;
-      stampCir=stampTri=false;
-    }
-    if (stamp==true && mouseX>sqcirX && mouseX<sqcirX+sqWidth && mouseY>sqY && mouseY<sqY+sqHeight) {
-      stampCir=true;
-      draw=false;
-      stampRec=stampTri=false;
-    }
-    if (stamp==true && mouseX>trX && mouseX<trX+sqWidth && mouseY>sqY && mouseY<sqY+sqHeight) {
-      stampTri=true;
-      draw=false;
-      stampRec=stampCir=false;
-    }  
-
-    if (mouseX>leftX && mouseX<leftX+colWidth && mouseY>topY && mouseY<topY+colHeight) {
-      drawColor = white;
+  if ( mouseX>penX && mouseX<penX+penWidth && mouseY>stampY && mouseY<stampY+penHeight ) 
+    if ( stamp == true ) {
+      stamp = false;
+      stampRESET = true;
+    } else {
+      stamp = true;
+      stampRESET = false;
+      draw=erase=false;
     }
 
-    if (mouseX>leftX && mouseX<leftX+colWidth && mouseY>cenY && mouseY<cenY+colHeight) {
-      drawColor=red;
+  if ( mouseX>penX && mouseX<penX+penWidth && mouseY>colorY && mouseY<colorY+penHeight ) 
+    if ( colorr == true ) {
+      colorr = false;
+      colorrRESET = true;
+    } else {
+      colorr = true;
+      colorrRESET = false;
+    }
+  if ( mouseX>penX && mouseX<penX+penWidth && mouseY>imageY && mouseY<imageY+penHeight ) 
+    if ( image == true ) {
+      image = false;
+      imageRESET = true;
+      imagemenu=false;
+    } else {
+      image = true;
+      imageRESET = false;
+      imagemenu=true;
     }
 
-    if (mouseX>leftX && mouseX<leftX+colWidth && mouseY>botY && mouseY<botY+colHeight) {
+  if (mouseX>thinX && mouseX<thinX+thinWidth && mouseY>thinY && mouseY<thinY+thinHeight) {
+    draw= true;
+    strokeW=1;
+    stamp=false;
+  }
+  if (mouseX>medX && mouseX<medX+thinWidth && mouseY>thinY && mouseY<thinY+thinHeight) {
+    draw= true;
+    strokeW=3;
+    stamp=false;
+  }
+  if ( mouseX>thickX && mouseX<thickX+thinWidth && mouseY>thinY && mouseY<thinY+thinHeight) {
+    draw= true;
+    strokeW=5;
+    stamp=false;
+  }
 
-      drawColor=orange;
+
+  if (mouseX>sqX && mouseX<sqX+sqWidth && mouseY>sqY && mouseY<sqY+sqHeight) {
+    stamp=true;
+    stampRec=true;
+    draw=false;
+    stampCir=stampTri=false;
+  }
+  if (mouseX>sqcirX && mouseX<sqcirX+sqWidth && mouseY>sqY && mouseY<sqY+sqHeight) {
+    stamp=true;
+    stampCir=true;
+    draw=false;
+    stampRec=stampTri=false;
+  }
+  if (mouseX>trX && mouseX<trX+sqWidth && mouseY>sqY && mouseY<sqY+sqHeight) {
+    stamp=true;
+    stampTri=true;
+    draw=false;
+    stampRec=stampCir=false;
+  }  
+
+  if (mouseX>leftX && mouseX<leftX+colWidth && mouseY>topY && mouseY<topY+colHeight) {
+    drawColor = white;
+  }
+
+  if (mouseX>leftX && mouseX<leftX+colWidth && mouseY>cenY && mouseY<cenY+colHeight) {
+    drawColor=red;
+  }
+
+  if (mouseX>leftX && mouseX<leftX+colWidth && mouseY>botY && mouseY<botY+colHeight) {
+
+    drawColor=orange;
+  }
+
+  if (mouseX>midX && mouseX<midX+colWidth && mouseY>topY && mouseY<topY+colHeight) {
+    drawColor=yellow;
+  }
+
+
+  if (mouseX>midX && mouseX<midX+colWidth && mouseY>cenY && mouseY<cenY+colHeight) {
+
+    drawColor=green;
+  }
+
+  if (mouseX>midX && mouseX<midX+colWidth && mouseY>botY && mouseY<botY+colHeight) {
+
+    drawColor=dgreen;
+  }
+
+  if (mouseX>rightX && mouseX<rightX+colWidth && mouseY>topY && mouseY<topY+colHeight) {
+
+    drawColor=brown;
+  }
+
+  if (mouseX>rightX && mouseX<rightX+colWidth && mouseY>cenY && mouseY<cenY+colHeight) {
+
+    drawColor = black;
+  }
+
+  if (mouseX>rightX && mouseX<rightX+colWidth && mouseY>botY && mouseY<botY+colHeight) {
+
+    drawColor= pink;
+  }
+  if (mouseX>ranX && mouseX<ranX+colWidth && mouseY>topY && mouseY<topY+ranHeight) {
+    drawColor=color( random(255), random(255), random(255));
+  }
+
+
+  if (imagemenu == true && mouseX>butterflyX && mouseX<butterflyX+igW && mouseY>igY && mouseY<igY+igH) {
+    image(butterfly, drawIgX, drawIgY, drawIgW, drawIgH);
+  }
+
+
+  if (imagemenu == true && mouseX>minionX && mouseX<minionX+igW && mouseY>igY && mouseY<igY+igH) {
+    image(minion, drawIgX, drawIgY, drawIgW, drawIgH);
+  }
+
+
+  if (imagemenu == true && mouseX>owlX && mouseX<owlX+igW && mouseY>igY && mouseY<igY+igH) {
+    image(owl, drawIgX, drawIgY, drawIgW, drawIgH);
+  }
+
+  //erase&resetart
+  if ( mouseX>eraseX && mouseX<eraseX+eraseW && mouseY>eraseY && mouseY<eraseY+eraseH ) 
+    if ( erase == true ) {
+      erase = false;
+    } else {
+      erase = true;
+      draw  = false;
+      stamp = false;
+    }
+  if ( mouseX>resetX && mouseX<resetX+eraseW && mouseY>eraseY && mouseY<eraseY+eraseH ) 
+    if ( reset == true ) {
+      rect( drawingSurfaceX, drawingSurfaceY, drawingSurfaceWidth, drawingSurfaceHeight );
+    } else {
+      rect( drawingSurfaceX, drawingSurfaceY, drawingSurfaceWidth, drawingSurfaceHeight );   
+      draw  = false;
+      stamp = false;
+      erase=false;
     }
 
-    if (mouseX>midX && mouseX<midX+colWidth && mouseY>topY && mouseY<topY+colHeight) {
-      drawColor=yellow;
-    }
-
-    if (mouseX>midX && mouseX<midX+colWidth && mouseY>cenY && mouseY<cenY+colHeight) {
-
-      drawColor=green;
-    }
-
-    if (mouseX>midX && mouseX<midX+colWidth && mouseY>botY && mouseY<botY+colHeight) {
-
-      drawColor=blue;
-    }
-
-    if (mouseX>rightX && mouseX<rightX+colWidth && mouseY>topY && mouseY<topY+colHeight) {
-
-      drawColor=purple;
-    }
-
-    if (mouseX>rightX && mouseX<rightX+colWidth && mouseY>cenY && mouseY<cenY+colHeight) {
-
-      drawColor = black;
-    }
-
-    if (mouseX>rightX && mouseX<rightX+colWidth && mouseY>botY && mouseY<botY+colHeight) {
-
-      drawColor= pink;
-    }
-    if (mouseX>ranX && mouseX<ranX+colWidth && mouseY>topY && mouseY<topY+ranHeight) {
-      drawColor=color( random(255), random(255), random(255));
-    }
-
-
-    if (imagemenu == true && mouseX>butterflyX && mouseX<butterflyX+igW && mouseY>igY && mouseY<igY+igH) {
-      image(butterfly, drawIgX, drawIgY, drawIgW, drawIgH);
-    }
-
-
-    if (imagemenu == true && mouseX>minionX && mouseX<minionX+igW && mouseY>igY && mouseY<igY+igH) {
-      image(minion, drawIgX, drawIgY, drawIgW, drawIgH);
-    }
-
-
-    if (imagemenu == true && mouseX>owlX && mouseX<owlX+igW && mouseY>igY && mouseY<igY+igH) {
-      image(owl, drawIgX, drawIgY, drawIgW, drawIgH);
-    }
-
-    //erase&resetart
-    if ( mouseX>eraseX && mouseX<eraseX+eraseW && mouseY>eraseY && mouseY<eraseY+eraseH ) 
-      if ( erase == true ) {
-        erase = false;
-      } else {
-        erase = true;
-        draw  = false;
-        stamp = false;
-      }
-    if ( mouseX>resetX && mouseX<resetX+eraseW && mouseY>eraseY && mouseY<eraseY+eraseH ) 
-      if ( reset == true ) {
-        rect( drawingSurfaceX, drawingSurfaceY, drawingSurfaceWidth, drawingSurfaceHeight );
-      } else {
-        rect( drawingSurfaceX, drawingSurfaceY, drawingSurfaceWidth, drawingSurfaceHeight );   
-        draw  = false;
-        stamp = false;
-        erase=false;
-      }
-
-    //exit
-    if ( mouseX>quitX && mouseX<quitX+quitWidth && mouseY>quitY && mouseY<quitY+quitHeight ) 
-    {
-      exit();
-    }
-  }//End mousePressed
-  //
-  //End MAIN Program
+  //exit
+  if ( mouseX>quitX && mouseX<quitX+quitWidth && mouseY>quitY && mouseY<quitY+quitHeight ) 
+  {
+    exit();
+  }
+}//End mousePressed
+//
+//End MAIN Program

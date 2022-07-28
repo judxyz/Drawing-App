@@ -1,15 +1,14 @@
 
 //Global Variables
 Minim  minim; //creates object to access all functions
-AudioPlayer song1, song2, song3; //creates a playlist
+AudioPlayer song1; //creates a playlist
 AudioMetaData songMetaData1;
-AudioPlayer player;
 AudioPlayer soundeff;
 //
-float musicX, musicY, musicW, musicH, playX, playY, playW, playH, nextX, nextY, nextW, nextH, prevX, prevY, loopX, loopY, muteX, muteY;
+float musicX, musicY, musicW, musicH, playX, playY, playW, playH, nextX, nextY, nextW, nextH, prevX, prevY, loopX, loopY, muteX, muteY, powerX, stopX;
 float titleX, titleY, titleWidth, titleHeight, bmX, bmY, bmW, bmH;
-PImage play, pause, prev, next, mute, loop;
-Boolean pauseON=false, playON=false;
+PImage play, pause, prev, next, mute, loop, power, stop;
+Boolean pauseON=false, playON=false, powerOFF=true;
 
 void musicsetup() {
   minim = new Minim(this); //load from data directory, loadFile should also load from project folder, like loadImage
@@ -19,9 +18,9 @@ void musicsetup() {
 
 
   //population
-  musicX = width*2.5/5;
+  musicX = width*2/5;
   musicY = height*8/9;
-  musicW = width*1/4.5;
+  musicW = width*1/3;
   musicH = height*1/10;
   playW = musicH/1.5;
   playH = musicH/1.5;
@@ -40,41 +39,65 @@ void musicsetup() {
   muteY = prevY;
   bmX = musicX+musicW+musicW*1/20;
   bmY = musicY;
-  bmW = musicW*7/6;
+  bmW = width*1/5;
   bmH = musicH;
+  powerX = musicX+30;
+  stopX = muteX+50;
 
   //
   rect(musicX, musicY, musicW, musicH);
-
-  play = loadImage("play.png");
-  image(play, playX, playY, playW, playH);
-  pause = loadImage("pause.png");
-  next = loadImage("next.png");
-  image(next, nextX, nextY, nextW, nextH);
-  prev = loadImage("prev.png");
-  image(prev, prevX, prevY, nextW, nextH);
-  loop = loadImage("loop.png");
-  image(loop, loopX, loopY, nextW, nextH);
-  mute = loadImage("mute.png");
-  image(mute, muteX, muteY, nextW, nextH);
-
-  rect(bmX, bmY, bmW, bmH);
+  power = loadImage("power.png");
+  image(power, powerX, muteY, nextW, nextH);
 }
 
 void musicdraw() {
-  textAlign( CENTER, TOP); 
-  fill(black);
-  textFont(font, 30);
-  text( songMetaData1.title(), bmX, bmY, bmW, bmH );
-  textAlign( CENTER, CENTER); 
-  textFont(font, 20);
-  text( songMetaData1.date(), bmX, bmY, bmW, bmH );
-  textAlign( CENTER, BOTTOM); 
-  text( songMetaData1.author(), bmX, bmY, bmW, bmH );
 
-  fill(white);
-  println("Song position", song1.position(), "Song Length", song1.length() ); //Amount of time left is a calculation
   //draw buttons
+
+
+  if (powerOFF ==true) {
+    rect(musicX, musicY, musicW, musicH);
+    image(power, powerX, muteY, nextW, nextH);
+    pauseON=false;
+    playON=false;
+    fill(pink);
+    stroke(pink);
+    rect(bmX, bmY, bmW, bmH);
+    fill(white);
+    stroke(white);
+  }
+
+  if (powerOFF == false) {
+    play = loadImage("play.png");
+    image(play, playX, playY, playW, playH);
+    pause = loadImage("pause.png");
+    next = loadImage("next.png");
+    image(next, nextX, nextY, nextW, nextH);
+    prev = loadImage("prev.png");
+    image(prev, prevX, prevY, nextW, nextH);
+    loop = loadImage("loop.png");
+    image(loop, loopX, loopY, nextW, nextH);
+    mute = loadImage("mute.png");
+    image(mute, muteX, muteY, nextW, nextH);
+
+    stop = loadImage("stop.png");
+    image(stop, stopX, muteY, nextW, nextH);
+    rect(bmX, bmY, bmW, bmH);
+
+    textAlign( CENTER, TOP); 
+    fill(black);
+    textFont(font, 30);
+    text( songMetaData1.title(), bmX, bmY, bmW, bmH );
+    textAlign( CENTER, CENTER); 
+    textFont(font, 20);
+    text( songMetaData1.date(), bmX, bmY, bmW, bmH );
+    textAlign( CENTER, BOTTOM); 
+    text( songMetaData1.author(), bmX, bmY, bmW, bmH );
+
+    fill(white);
+    println("Song position", song1.position(), "Song Length", song1.length() ); //Amount of time left is a calculation
+  }
+
   if (pauseON == true) {
     fill(white);
     noStroke();
@@ -88,11 +111,20 @@ void musicdraw() {
     image(play, playX, playY, playW, playH);
     stroke(1);
   }
+ 
+   
 }
 
 
 void musicplay() {
 
+  if (mouseX>powerX && mouseX<powerX+nextW && mouseY>muteY && mouseY<muteY+nextH) {
+    if (powerOFF == false) {
+      powerOFF = true;
+    } else {
+      powerOFF=false;
+    }
+  }
 
   if (mouseX>playX && mouseX<playX+playW && mouseY>playY && mouseY<playY+playH) {
     if (pauseON == false) {
@@ -105,16 +137,15 @@ void musicplay() {
   }
 
   if (playON == true) {
-    song1.loop(0);
+    song1.pause();
   }
 
-  if ( pauseON == true && song1.isPlaying() ) {
-    song1.pause();
-  } else if ( song1.position() == song1.length() ) {
+
+  if ( pauseON == true && mouseX>playX && mouseX<playX+playW && mouseY>playY && mouseY<playY+playH) {
+    song1.loop(0);
+  } else if ( song1.position() >= song1.length()-song1.length()*1/5) {
     song1.rewind();
-    song1.play();
-  } else {
-    song1.play();
+    song1.loop(0);
   }
 
 
@@ -122,7 +153,6 @@ void musicplay() {
 
   if (mouseX>nextX && mouseX<nextX+nextW && mouseY>nextY && mouseY<nextY+nextH) {
     if ( song1.isPlaying() ) {
-      song1.play();
       song1.skip(3000);
     }
   }
@@ -130,7 +160,6 @@ void musicplay() {
 
   if (mouseX>prevX && mouseX<prevX+nextW && mouseY>prevY && mouseY<prevY+nextH) {
     if ( song1.isPlaying() ) {
-      song1.play();
       song1.skip(-3000);
     }
   }
@@ -147,4 +176,16 @@ void musicplay() {
       song1.mute();
     }
   }
+
+  if (mouseX>stopX && mouseX<stopX+nextW && mouseY>muteY && mouseY<muteY+nextH) {
+    if ( song1.isPlaying()) {
+      song1.pause();
+      song1.rewind();
+    } else {
+      song1.rewind();
+      song1.play();
+    }
+  }
+
+
 }//End Music
