@@ -181,11 +181,12 @@ void musicplay() {
     if ( song1.isPlaying()) {
       song1.pause();
       song1.rewind();
+      playON=true;
     } else {
       song1.rewind();
       song1.play();
+      pauseON=true;
     }
   }
-
 
 }//End Music

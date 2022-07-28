@@ -150,7 +150,7 @@ void draw() {
   text( nmtext, nmX, nmY, nmW, nmH);
   fill(white);
   musicdraw();
-
+  fill(white);
   if (draw == true) {
     stroke(drawColor);
     strokeWeight(strokeW);
