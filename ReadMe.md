@@ -1,12 +1,4 @@
 # Drawing Application - Processing
-CS10 Final Project
-
-
-- Name and describe the behaviour of common Music Player Buttons
-- Prototype all single song function buttons with alpha numeric numbering
-- Prototype file information like meta data (i.e. .title() )
-- Prototype arrays to hold multiple songs
-- Prototype the next button, previous button and ArrayListOutOfBounds ERROR
 
 ## side buttons:
 - pen tool -> stroke: thin, medium, thick
